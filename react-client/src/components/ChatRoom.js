@@ -11,8 +11,6 @@ const ChatRoom = () => {
   const [publicChats, setPublicChats] = useState([]);
   const [tab, setTab] = useState("CHATROOM");
   const inputFile = useRef(null);
-  var usersConections = [];
-  var activeMe = false;
   var subscription;
   const [userData, setUserData] = useState({
     username: "",
@@ -40,21 +38,6 @@ const ChatRoom = () => {
     userJoin();
   };
 
-  const findUserName = () => {
-    usersConections = privateChats.keys();
-    let i = 0;
-
-    for (const key of usersConections) {
-      if (i > 0) {
-        if (key == userData.username) {
-          break;
-        } else setUserData({ ...userData, connected: true });
-      }
-      i++;
-      console.log(key);
-    }
-  };
-
   const userJoin = () => {
     var chatMessage = {
       senderName: userData.username,
@@ -67,15 +50,12 @@ const ChatRoom = () => {
     var payloadData = JSON.parse(payload.body);
     switch (payloadData.status) {
       case "JOIN":
-        
-          if (!privateChats.get(payloadData.senderName)) {
-            privateChats.set(payloadData.senderName, []);
-            setPrivateChats(new Map(privateChats));
-            userJoin();
-            
-              setUserData({ ...userData, connected: true });
-          }
-        
+        if (!privateChats.get(payloadData.senderName)) {
+          privateChats.set(payloadData.senderName, []);
+          setPrivateChats(new Map(privateChats));
+          userJoin();
+          setUserData({ ...userData, connected: true });
+        }
 
         break;
       case "MESSAGE":
